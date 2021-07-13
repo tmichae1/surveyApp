@@ -16,10 +16,7 @@ import datetime
 def home(request):
     template_name = "questionnaire/main.html"
     # Get surveys
-    
-
-
-
+    print("hello")
 
     return render(request, template_name)
 
