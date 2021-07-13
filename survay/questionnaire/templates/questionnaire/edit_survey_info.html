@@ -1,0 +1,18 @@
+{% extends "questionnaire/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content-section">
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Edit Info</legend>
+            {{ form|crispy }}
+        </fieldset>
+        <button class="btn btn-outline-primary" type="submit">Edit</button>
+    </form>
+</div>
+<script>
+    let datePicker = document.getElementById('id_expiry_date')
+    datePicker.min = moment().add(1, "days").format("YYYY-MM-DD")
+</script>
+{% endblock content %}

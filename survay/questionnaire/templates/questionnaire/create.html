@@ -1,0 +1,168 @@
+{% extends "questionnaire/base.html" %}
+{% block content %}
+<div class="content-section">
+  <h2 style="text-align: center">Create a Survey</h2>
+  <hr />
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="survey-title">Title of Survey</label>
+      <input
+        name="title"
+        required
+        type="text"
+        class="form-control"
+        id="survey-title"
+        placeholder="Title..."
+      />
+    </div>
+    <h5 style="text-align: center">Create Section</h5>
+    <div class="line"></div>
+
+    <div class="form-group">
+      <label for="section-name">Section Name</label>
+      <input
+              name="section-name"
+              required
+              type="text"
+              class="form-control"
+              id="section-name"
+              placeholder="Section Name..."
+
+      />
+    </div>
+    <h5 style="text-align: center">Create Questions</h5>
+
+    <div class="form-group" id="questionsDiv">
+      {% for i in input_range %}
+      {% if i == 1%}
+        <div class="line"></div>
+        <h5>Question {{i}}.</h5>
+        <label for="question_{{i}}">Question</label>
+        <input
+          type="text"
+          class="form-control"
+          id="question_{{i}}"
+          name="question"
+          placeholder="Question...."
+          required
+        />
+        <br />
+        <label for="questionType_{{i}}">How is this question answered</label>
+        <select class="form-select" name="question_type" id="questionType_{{i}}">
+          <option value="Multiple Choice">Multiple Choice</option>
+          <option value="True_False">True/False</option>
+          <option value="Text">Text</option>
+        </select>
+        <br>
+        <label for="answers_{{i}}">Multiple choice answers. (Separate answers with a slash '/' )</label>
+        <input
+                type="text"
+                class="form-control"
+                id="answers_{{i}}"
+                name="answers"
+                value="Strongly Disagree/Disagree/Neither Agree Nor Disagree/Agree/Strongly Agree"
+        />
+        <br>
+      {% else %}
+          <div class="line"></div>
+          <h5>Question {{i}}.</h5>
+          <label for="question_{{i}}">Question</label>
+          <input
+                  type="text"
+                  class="form-control"
+                  id="question_{{i}}"
+                  name="question"
+                  placeholder="Question...."
+          />
+          <br />
+          <label for="questionType_{{i}}">How is this question answered</label>
+          <select class="form-select" name="question_type" id="questionType_{{i}}">
+            <option value="Multiple Choice">Multiple Choice</option>
+            <option value="True_False">True/False</option>
+            <option value="Text">Text</option>
+          </select>
+          <br>
+          <label for="answers_{{i}}">Multiple choice answers. (Separate answers with a slash '/' )</label>
+          <input
+                  type="text"
+                  class="form-control"
+                  id="answers_{{i}}"
+                  name="answers"
+                  value="Strongly Disagree/Disagree/Neither Agree Nor Disagree/Agree/Strongly Agree"
+          />
+          <br>
+      {% endif %}
+      {% endfor %}
+
+    </div>
+    <div class="btn btn-dark add-btn" onclick="addQuestions()">
+      <i class="fas fa-plus"></i> Add More Questions
+    </div>
+    <button type="submit" class="btn btn-secondary add-btn" name="add_section">
+      <i class="fas fa-plus"></i> Add Another Section
+    </button>
+    <hr />
+    <button class="btn btn-success" type="submit">Finish And Create Survey</button>
+  </form>
+</div>
+
+<script type="text/javascript">
+  let numQuestions = document.getElementsByName('question').length
+  function addQuestions(e) {
+    console.log("pressed");
+    let questions = document.getElementsByName("question");
+    let start = questions.length + 1;
+    const lim = start + 10;
+    let questionsDiv = document.getElementById("questionsDiv");
+    for (let i = start; i < lim; i++) {
+      let newFormElement= `
+            <div class="line"></div>
+            <h5>Question ${i}.</h5>
+            <label for="question_${i}">Question</label>
+            <input type="text" class="form-control" id="question_${i}" name="question" placeholder="Question....">
+            <br>
+            <label for="questionType_${i}">How is this question answered</label>
+            <select class="form-select" name="question_type" id="questionType_${i}">
+              <option value="Multiple Choice">Multiple Choice</option>
+              <option value="True_False">True/False</option>
+              <option value="Text">Text</option>
+            </select>
+            <br>
+            <label for="answers_${i}">Multiple choice answers. (Separate answers with a slash '/' )</label>
+            <input
+              type="text"
+              class="form-control"
+              id="answers_${i}"
+              name="answers"
+              value="Strongly Disagree/Disagree/Neither Agree Nor Disagree/Agree/Strongly Agree"
+            />
+      <br>
+
+            `;
+       $("#questionsDiv").append(newFormElement)
+    }
+    addDisableEvent()
+  }
+
+  function addDisableEvent(){
+    let questionsType = document.getElementsByName("question_type")
+    let answersInputs = document.getElementsByName("answers")
+    for (let i = 0; i < questionsType.length; i++) {
+      questionsType[i].addEventListener("change", function(event) {
+        if (event.target.value === "Multiple Choice"){
+          answersInputs[i].value = "Strongly Disagree/Disagree/Neither Agree Nor Disagree/Agree/Strongly Agree"
+          answersInputs[i].readOnly = false
+        }
+        else {
+          answersInputs[i].value = "Disabled"
+          answersInputs[i].readOnly = true
+
+        }
+      })
+    }
+  }
+
+  addDisableEvent()
+</script>
+{% endblock content %}

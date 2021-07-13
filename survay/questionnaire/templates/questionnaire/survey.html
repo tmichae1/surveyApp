@@ -1,0 +1,54 @@
+{% extends "questionnaire/base.html" %}
+{% block content %}
+
+{% if expired == True %}
+    <div class="alert alert-warning" role="alert">This Survey has Expired</div>
+{% elif taken == True %}
+    <div class="alert alert-warning" role="alert">Survey already taken</div>
+{% elif not taken %}
+<div class="content-section">
+    <h2 style="text-align: center">{{survey.name}}</h2>
+    <hr />
+    <form method="POST">
+        {% csrf_token %}
+        {% for section in question_list %}
+        <div class="form-group" style="text-align: center">
+            <h2> Section {{forloop.counter}} - {{section.name}}</h2>
+            <hr >
+            {% for question in section.questions %}
+                <h5 style="margin-bottom: 20px;">{{forloop.counter}}). {{question.question}}</h5>
+                    {% if question.question_type == "Multiple Choice"%}
+                        {% for answer in question.answers%}
+                            <input type="radio" class="btn-check" value="{{answer}}" name="{{section.name}}_{{question.question}}" id="{{section.name}}_{{question.question}}_{{forloop.counter}}" autocomplete="off" required>
+                            <label class="btn btn-outline-success" for="{{section.name}}_{{question.question}}_{{forloop.counter}}">{{answer}}</label>
+                        {% endfor %}
+                    {% elif question.question_type == "Text" %}
+                        <textarea maxlength="500" class="form-control" rows="6"
+                                  name="{{section.name}}_{{question.question}}"
+                                  placeholder="Type answer here... (max characters 500)"
+                                  required></textarea>
+                    {% elif question.question_type == "True_False"%}
+                        <select class="form-select" name="{{section.name}}_{{question.question}}" required>
+                            <option value="true">True</option>
+                            <option value="false">False</option>
+                        </select>
+                    {% endif %}
+            <br >
+            <br >
+            {% endfor %}
+            <div class="line"></div>
+        </div>
+        {% endfor %}
+        <button class="btn btn-dark" type="submit">Submit Survey</button>
+    </form>
+</div>
+{% endif %}
+<script type="text/javascript">
+    let selectors = document.getElementsByTagName("select")
+    for(let i = 0; i<selectors.length; i++){
+        selectors[i].selectedIndex = -1
+    }
+
+
+</script>
+{% endblock content %}

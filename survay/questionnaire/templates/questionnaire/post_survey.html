@@ -1,0 +1,68 @@
+{% extends "questionnaire/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% if surveys %}
+<div class="content-section" id="content">
+    <form method="POST">
+        {% csrf_token %}
+        <label for="questionnairePicker">Choose a Questionnaire to Publish</label>
+        <select class="form-select" name="survey" id="questionnairePicker">
+            {% for survey in surveys %}
+                <option value={{survey.id}}>{{survey.name}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="datePicker">Expiry Date:</label>
+        <input type="date" id="datePicker" name="date-picker" onkeydown="return false">
+        <br>
+        <br>
+        <button type="submit" class="btn btn-dark" id="sendBtn" onclick="this.disabled=true,this.form.submit()" >Send</button>
+    </form>
+    <div class="loader" id="loaderContainer"></div>
+</div>
+{% else %}
+<div class="alert alert-warning" role="alert">No surveys created.</div>
+<small class="text-muted">
+    Create a Survey? <a href="{% url 'create' %}" class="ml-2">Click Here</a>
+</small>
+{% endif %}
+<script type="text/javascript">
+    let selector = document.getElementById("questionnairePicker")
+    selector.selectedIndex = -1;
+    let sendBtn = document.getElementById("sendBtn")
+    function buttonToggle() {
+        if(!selector.options.length || selector.selectedIndex < 0) {
+            sendBtn.disabled = true
+        } else {
+            sendBtn.disabled = false
+        }
+    }
+    buttonToggle()
+    selector.addEventListener("change", function(){
+        buttonToggle()
+    })
+
+    sendBtn.addEventListener("click", function loading(e) {
+        let container = document.getElementById("loaderContainer")
+        loaderContainer.innerHTML = `
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status" style="width: 5rem; height: 5rem;">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        `
+    })
+
+    //  DatePicker Handlers
+    //  first give date picker the default date of 2 weeks
+    let today = moment()
+    let defaultDate = moment().add(15, "days")
+    datePicker = document.getElementById("datePicker")
+    datePicker.defaultValue = defaultDate.format("YYYY-MM-DD")
+    datePicker.min = moment().add(1, "days").format("YYYY-MM-DD")
+
+
+
+
+</script>
+{% endblock content %}

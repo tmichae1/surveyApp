@@ -1,0 +1,38 @@
+{% extends "questionnaire/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% if surveys %}
+<h2 style="text-align: center">My Surveys</h2>
+<div class="container-fluid mt-4" id="content">
+   <div class="row">
+       {% for survey in surveys %}
+       <div class="col-xs-12 col-sm-6 col-lg-4">
+           <div class="content-section survey-status d-flex align-items-start flex-column">
+               <h4 class="ml-auto mr-auto">{{survey.name}}</h4>
+               {% if survey.status == "Expired" or survey.status == "Not Yet Published" %}
+                    <p>Status: <strong>{{survey.status}}</strong></p>
+               {% else %}
+                    <p>Status: Active Until <strong>{{survey.status}}</strong>.</p>
+               {% endif %}
+               <p>Published: <strong>{{survey.published}}</strong></p>
+               <p>Completed: <strong>{{survey.surveys_completed}}</strong></p>
+               <p>Not Completed: <strong>{{survey.surveys_not_completed}}</strong></p>
+               <div class="ml-auto">
+                   <a class="btn btn-primary ml-auto" href="{% url 'edit-survey-info' survey.url_id %}">Edit Survey Info</a>
+                   <a class="btn btn-danger ml-auto" href="{% url 'delete-survey' survey.url_id %}" onClick="return confirm('Are you sure you want to delete \n{{survey.name}}')">Delete Survey</a>
+
+               </div>
+
+           </div>
+       </div>
+       {% endfor %}
+   </div>
+</div>
+{% else %}
+<div class="alert alert-warning" role="alert">No surveys created.</div>
+<small class="text-muted">
+    Create a Survey? <a href="{% url 'create' %}" class="ml-2">Click Here</a>
+</small>
+{% endif %}
+
+{% endblock content %}

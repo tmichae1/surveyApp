@@ -1,0 +1,21 @@
+{% extends "questionnaire/base.html" %}
+{% block content %}
+<div class = "content-section button-container" >
+
+    <a class="main-btn" href="{% url 'create' %}">
+        <h3>Create New Survey</h3>
+    </a>
+
+    <a class="main-btn" href="{% url 'send-survey' %}">
+        <h3>Publish Survey</h3>
+    </a>
+
+    <a class="main-btn" href="{% url 'survey-status' %}">
+        <h3>My Surveys</h3>
+    </a>
+</div>
+
+<script type="text/javascript">
+
+</script>
+{% endblock content %}
